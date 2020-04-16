@@ -1,0 +1,149 @@
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 100MB
+  main:
+    allow-bean-definition-overriding: true
+  #zipkin数据收集 ----begin
+  zipkin:
+    sender:
+      type: rabbit
+  sleuth:
+    sampler:
+      # 将采样比例设置为 1.0，也就是全部都需要。默认是 0.1
+      probability: 0.1
+  #zipkin数据收集 ----end
+  #rabbitMq的配置
+  rabbitmq:
+    host: 192.168.1.126
+    port: 15672
+    username: guest
+    password: guest
+    virtual-host: /
+    publisher-returns: true
+    publisher-confirms: true
+    template:
+      mandatory: true
+    listener:
+      simple:
+        ## 初始并发量
+        concurrency: 5
+        ## 最大并发量
+        max-concurrency: 15
+        ## 签收方式   NONE：自动确认。
+        ##           AUTO：根据情况确认(spring根据是否有抛出异常，处理)。
+        ##           MANUAL：手动确认
+        acknowledge-mode: manual
+        ## 最多一次消费多少条数据 -限流
+        prefetch: 1
+  redis:
+    cluster:
+      nodes:
+        - 192.168.1.126:6300
+        - 192.168.1.126:6301
+        - 192.168.1.126:6302
+        - 192.168.1.126:6303
+        - 192.168.1.126:6304
+        - 192.168.1.126:6305
+      max-redirects: 6    # 获取失败 最大重定向次数
+    password: Keda123456
+    #    # 连接超时时间（毫秒）
+    timeout: 5000ms
+    lettuce:
+      pool:
+        # 连接池最大连接数（使用负值表示没有限制）
+        max-active: 30
+        # 连接池中的最大空闲连接
+        max-idle: 15
+        # 连接池中的最小空闲连接
+        min-idle: 6
+        # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: -1ms
+      # 关闭超时时间
+      shutdown-timeout: 1000ms
+  datasource:
+    name: keda-gateway
+    url: jdbc:mysql://192.168.1.126:13307/keda_sys?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8&useSSL=false&autoReconnect=true&failOverReadOnly=false
+    username: root
+    password: Keda@123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    #最大连接池数量
+    maxActive: 8
+    #最小连接池数量
+    minIdle: 1
+    #初始化时建立物理连接的个数。初始化发生在显示调用init方法，或者第一次getConnection时
+    initialSize: 1
+    #获取连接时最大等待时间，单位毫秒。配置了maxWait之后，缺省启用公平锁，并发效率会有所下降，如果需要可以通过配置useUnfairLock属性为true使用非公平锁。
+    maxWait: 60000
+    # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    timeBetweenEvictionRunsMillis: 60000
+    # 配置一个连接在池中最小生存的时间，单位是毫秒
+    minEvictableIdleTimeMillis: 300000
+    #用来检测连接是否有效的sql
+    validationQuery: select 'x'
+    #	申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。
+    testOnBorrow: false
+    #归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
+    testOnReturn: false
+    #建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
+    testWhileIdle: true
+    #是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql下建议关闭。
+    poolPreparedStatements: false
+    #要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100
+    maxOpenPreparedStatements: -1
+    maxPoolPreparedStatementPerConnectionSize: 10
+    useGlobalDataSourceStat: true
+    #timeBetweenLogStatsMillis: 1000
+    filter: stat,wall,log4j
+    # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+    connectProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+#配置服务注册中心
+eureka:
+  instance:
+    # 心跳检测检测与续约时间
+    # 测试时将值设置设置小些，保证服务关闭后注册中心能及时踢出服务
+    #    lease-renewal-interval-in-seconds: 1
+    #    lease-expiration-duration-in-seconds: 2
+    # 使用 ip 代替实例名
+    prefer-ip-address: true
+    # 实例的主机名
+    hostname: ${spring.cloud.client.ip-address}
+    # 实例的 ID 规则
+    instance-id: ${eureka.instance.hostname}:${eureka.instance.non-secure-port}
+    status-page-url-path: /actuator/info
+    health-check-url-path: /actuator/health
+  client:
+    #表示eureka client间隔多久去拉取服务注册信息，至少为30秒，对于api网关，如果要迅速获取服务注册状态，可以缩小该值，大约5秒
+    registry-fetch-interval-seconds: 5
+    #表示是否将自己注册到Eureka Server上，默认为true
+    register-with-eureka: true
+    #表示是否从Eureka Server上获取注册信息，默认为true
+    fetch-registry: true
+    #实例是否使用同一zone里的eureka服务器，默认为true
+    prefer-same-zone-eureka: true
+    serviceUrl:
+      # 注册中心地址
+      defaultZone: http://192.168.1.126:20000/eureka/
+
+oss:
+  keda:
+    image:
+      limit:
+        size: 512000
+    intranet: false
+    endpointInternal: oss-cn-shanghai-internal.aliyuncs.com
+    endpoint: oss-cn-shanghai.aliyuncs.com
+    accessKeyId: xxxxxxxxxxxxxxxxxxxxxxxx
+    accessKeySecret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    # 正式库
+    regularData: xxxxxx-bucket
+    # 临时库
+    tempData: xxxxxx-bucket
+
+keda:
+  exception:
+    simple: false

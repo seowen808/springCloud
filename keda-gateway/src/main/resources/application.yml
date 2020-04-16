@@ -1,0 +1,92 @@
+server:
+  port: 9889
+spring:
+  application:
+    name: keda-gateway
+  profiles:
+    active: dev
+
+  cloud:        # spring cloud gateway 路由配置方式
+    gateway:
+      discovery:      #是否与服务发现组件进行结合，通过 serviceId(必须设置成大写) 转发到具体的服务实例。默认为false，设为true便开启通过服务中心的自动根据 serviceId 创建路由的功能。
+        locator:      #路由访问方式：http://Gateway_HOST:Gateway_PORT/大写的serviceId/**，其中微服务应用名默认大写访问。
+          enabled: false
+      httpclient:
+        pool:
+          type: elastic
+          max-connections: 200
+  #关闭 springBoot 对json格式的 空检查
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+  #  time-zone: GMT+8
+      #      date-format: y21892: Unable to open socket file: target process not responding or HotSpot VM not loaded
+      #The -F option can be used when the target process is not respondingyyy-MM-dd HH:mm:ss
+   # date-format: yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
+  servlet:
+    multipart:
+      # maxFileSize 单个数据大小
+      max-file-size: 100MB
+      # maxRequestSize 是总数据大小
+      max-request-size: 200MB
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
+mybatis-plus:
+  mapper-locations: classpath:/mappers/*.xml
+  #指定需要扫描的枚举包，用于自定义的枚举字段的转换
+#  typeEnumsPackage: com.keda.gateway.entity.enums
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+
+### Feign 配置
+feign:
+  #开启feign熔断器功能
+  hystrix:
+    enabled: true
+  httpclient:
+    # 开启 Http Client
+    enabled: true
+    # 最大连接数，默认：200
+    max-connections: 200
+    # 最大路由，默认：50
+    max-connections-per-route: 50
+    # 连接超时，默认：2000/毫秒
+    connection-timeout: 120000
+    # 生存时间，默认：900L
+    time-to-live: 1000
+hystrix:
+  shareSecurityContext: true
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 2200000
+
+  threadpool:
+    default:
+      coreSize: 100
+
+#日志配置
+logging:
+  level:
+    #org.springframework.cloud.gateway: TRACE
+    org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: DEBUG
+    com.netflix.loadbalancer.DynamicServerListLoadBalancer: INFO
+    #    org.springframework.http.server.reactive: DEBUG
+    #    org.springframework.web.reactive: DEBUG
+    #    reactor.ipc.netty: DEBUG
+    # org.springframework.cloud.gateway.handler: DEBUG
+    com.keda.gateway: DEBUG
+    com.keda.gateway.mapper: DEBUG
+    net.logstash.logback: DEBUG
+  config: classpath:logback-spring.xml
+  path: /data/springCloud/${spring.application.name}/${eureka.instance.hostname}-${server.port}/logs/
+

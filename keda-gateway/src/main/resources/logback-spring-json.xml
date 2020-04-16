@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <!--输出到trace-->
+    <appender name="trace_json" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+        <jsonFactoryDecorator class="com.keda.util.json.MyJsonFactoryDecorator"/>
+        <providers class="net.logstash.logback.composite.loggingevent.LoggingEventJsonProviders">
+            <pattern>
+                <pattern>
+                    {
+                    "service": "${SERVER_NAME:-}",
+                    "local_ip": "%LOCAL_IP",
+                    "timestamp": "%d{yyyy-MM-dd HH:mm:ss.SSS}",
+                    "level": "%level",
+                    "trace": "%X{X-B3-TraceId:-}",
+                    "span": "%X{X-B3-SpanId:-}",
+                    "parent": "%X{X-B3-ParentId:-}",
+                    "exportable": "%X{X-Span-Export:-}",
+                    "pid": "${PID:-}",
+                    "thread": "%thread",
+                    "class": "%class",
+                    "line": "%line",
+                    "method": "%method",
+                    "message": "%message"
+                    }
+                </pattern>
+            </pattern>
+        </providers>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <fileNamePattern>${LOG_PATH}/trace/trace-%d{yyyyMMdd}.json</fileNamePattern>
+    </rollingPolicy>
+    <append>true</append>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印INFO日志 -->
+        <level>TRACE</level>
+        <onMatch>ACCEPT</onMatch>
+        <onMismatch>DENY</onMismatch>
+    </filter>
+    </appender>
+
+    <!--输出到info-->
+    <appender name="info_json" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <jsonFactoryDecorator class="com.keda.util.json.MyJsonFactoryDecorator"/>
+            <providers class="net.logstash.logback.composite.loggingevent.LoggingEventJsonProviders">
+                <pattern>
+                    <pattern>
+                        {
+                        "service": "${SERVER_NAME:-}",
+                        "local_ip": "%LOCAL_IP",
+                        "timestamp": "%d{yyyy-MM-dd HH:mm:ss.SSS}",
+                        "level": "%level",
+                        "trace": "%X{X-B3-TraceId:-}",
+                        "span": "%X{X-B3-SpanId:-}",
+                        "parent": "%X{X-B3-ParentId:-}",
+                        "exportable": "%X{X-Span-Export:-}",
+                        "pid": "${PID:-}",
+                        "thread": "%thread",
+                        "class": "%class",
+                        "line": "%line",
+                        "method": "%method",
+                        "message": "%message"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/info/info-%d{yyyyMMdd}.json</fileNamePattern>
+        </rollingPolicy>
+        <append>true</append>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印INFO日志 -->
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!--输出到debug-->
+    <appender name="debug_json" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <jsonFactoryDecorator class="com.keda.util.json.MyJsonFactoryDecorator"/>
+            <providers class="net.logstash.logback.composite.loggingevent.LoggingEventJsonProviders">
+                <pattern>
+                    <pattern>
+                        {
+                        "service": "${SERVER_NAME:-}",
+                        "local_ip": "%LOCAL_IP",
+                        "timestamp": "%d{yyyy-MM-dd HH:mm:ss.SSS}",
+                        "level": "%level",
+                        "trace": "%X{X-B3-TraceId:-}",
+                        "span": "%X{X-B3-SpanId:-}",
+                        "parent": "%X{X-B3-ParentId:-}",
+                        "exportable": "%X{X-Span-Export:-}",
+                        "pid": "${PID:-}",
+                        "thread": "%thread",
+                        "class": "%class",
+                        "line": "%line",
+                        "method": "%method",
+                        "message": "%message"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/debug/debug-%d{yyyyMMdd}.json</fileNamePattern>
+        </rollingPolicy>
+        <append>true</append>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印DEBUG日志 -->
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!--输出到error-->
+    <appender name="error_json" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <jsonFactoryDecorator class="com.keda.util.json.MyJsonFactoryDecorator"/>
+            <providers class="net.logstash.logback.composite.loggingevent.LoggingEventJsonProviders">
+                <pattern>
+                    <pattern>
+                        {
+                        "service": "${SERVER_NAME:-}",
+                        "local_ip": "%LOCAL_IP",
+                        "timestamp": "%d{yyyy-MM-dd HH:mm:ss.SSS}",
+                        "level": "%level",
+                        "trace": "%X{X-B3-TraceId:-}",
+                        "span": "%X{X-B3-SpanId:-}",
+                        "parent": "%X{X-B3-ParentId:-}",
+                        "exportable": "%X{X-Span-Export:-}",
+                        "pid": "${PID:-}",
+                        "thread": "%thread",
+                        "class": "%class",
+                        "line": "%line",
+                        "method": "%method",
+                        "message": "%message"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/error/error-%d{yyyyMMdd}.json</fileNamePattern>
+        </rollingPolicy>
+        <append>true</append>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印ERROR日志 -->
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!--输出到warn-->
+    <appender name="warn_json" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <jsonFactoryDecorator class="com.keda.util.json.MyJsonFactoryDecorator"/>
+            <providers class="net.logstash.logback.composite.loggingevent.LoggingEventJsonProviders">
+                <pattern>
+                    <pattern>
+                        {
+                        "service": "${SERVER_NAME:-}",
+                        "local_ip": "%LOCAL_IP",
+                        "timestamp": "%d{yyyy-MM-dd HH:mm:ss.SSS}",
+                        "level": "%level",
+                        "trace": "%X{X-B3-TraceId:-}",
+                        "span": "%X{X-B3-SpanId:-}",
+                        "parent": "%X{X-B3-ParentId:-}",
+                        "exportable": "%X{X-Span-Export:-}",
+                        "pid": "${PID:-}",
+                        "thread": "%thread",
+                        "class": "%class",
+                        "line": "%line",
+                        "method": "%method",
+                        "message": "%message"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/warn/warn-%d{yyyyMMdd}.json</fileNamePattern>
+        </rollingPolicy>
+        <append>true</append>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印WARN日志 -->
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+
+
+    <!--异步写入日志文件-->
+    <appender name="async_traceJson" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <maxFlushTime>500</maxFlushTime>
+        <neverBlock>false</neverBlock>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="trace_json"/>
+    </appender>
+
+    <appender name="async_infoJson" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <maxFlushTime>500</maxFlushTime>
+        <neverBlock>false</neverBlock>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="info_json"/>
+    </appender>
+
+    <appender name="async_debugJson" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <maxFlushTime>500</maxFlushTime>
+        <neverBlock>false</neverBlock>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="debug_json"/>
+    </appender>
+
+    <appender name="async_errorJson" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <maxFlushTime>500</maxFlushTime>
+        <neverBlock>false</neverBlock>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="error_json"/>
+    </appender>
+
+    <appender name="async_warnJson" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <maxFlushTime>500</maxFlushTime>
+        <neverBlock>false</neverBlock>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="warn_json"/>
+    </appender>
+
+
+</included>

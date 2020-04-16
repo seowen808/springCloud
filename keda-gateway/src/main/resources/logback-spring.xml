@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false"  packagingData="true">
+    <conversionRule conversionWord="localIP" converterClass="com.keda.util.conf.LocalIPConfig" />
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <!--服务所在IP地址 -->
+    <conversionRule conversionWord="LOCAL_IP" converterClass="com.keda.util.conf.LocalIpConfig" />
+    <!--服务名称 -->
+    <springProperty name="SERVER_NAME" scope="context"   source="spring.application.name" />
+
+    <!--日志在工程中的输出位置 -->
+    <springProperty name="LOG_PATH" source="logging.path" />
+    <!-- 控制台的日志输出样式 -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%highlight([${SERVER_NAME}])--%green([%LOCAL_IP])--%red([%d{yyyy-MM-dd HH:mm:ss.SSS}])--%highlight([%-5level])--%highlight([${LOG_LEVEL_PATTERN}])--%clr([PID:: ${PID}])--%green([T:: %thread])--%yellow([CL:: %class])--%highlight([L:: %L])--%boldGreen([MD:: %method])--%n[MSG:: %m]--%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+    <!--文件的日志输出样式-->
+    <property name="FILE_LOG_PATTERN"
+              value="[${SERVER_NAME}]--[%LOCAL_IP]--[%d{yyyy-MM-dd HH:mm:ss.SSS}]--[%-5level]--[${LOG_LEVEL_PATTERN}]--[${PID}]--[%thread]--[%class]--[%L]--[%method]--[%m]--%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+
+    <!--输出到控制台-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <!--此日志appender是为开发使用，只配置最底级别，控制台输出的日志级别是大于或等于此级别的日志信息-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>debug</level>
+        </filter>
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+    </appender>
+
+    <!--输出到trace-->
+    <appender name="trace_file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/trace/trace-%d{yyyyMMdd}.log</fileNamePattern>
+        </rollingPolicy>
+        <append>true</append>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>${FILE_LOG_PATTERN}</Pattern>
+        </layout>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印INFO日志 -->
+            <level>TRACE</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!--输出到debug-->
+    <appender name="debug_file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/debug/debug-%d{yyyyMMdd}.log</fileNamePattern>
+        </rollingPolicy>
+        <append>true</append>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>${FILE_LOG_PATTERN}</Pattern>
+        </layout>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印DEBUG日志 -->
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!--输出到info-->
+    <appender name="info_file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/info/info-%d{yyyyMMdd}.log</fileNamePattern>
+        </rollingPolicy>
+        <append>true</append>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>${FILE_LOG_PATTERN}</Pattern>
+        </layout>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印INFO日志 -->
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!--输出到error-->
+    <appender name="error_file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/error/error-%d{yyyyMMdd}.log</fileNamePattern>
+        </rollingPolicy>
+        <append>true</append>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>${FILE_LOG_PATTERN}</Pattern>
+        </layout>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印ERROR日志 -->
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!--输出到warn-->
+    <appender name="warn_file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/warn/warn-%d{yyyyMMdd}.log</fileNamePattern>
+        </rollingPolicy>
+        <append>true</append>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>${FILE_LOG_PATTERN}</Pattern>
+        </layout>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印WARN日志 -->
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!--输出到 sql -->
+    <appender name="druid_file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件输出的文件名 -->
+            <FileNamePattern>${LOG_PATH}/sql/druid-sql-%d{yyyyMMdd}.slog</FileNamePattern>
+        </rollingPolicy>
+        <append>true</append>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>${FILE_LOG_PATTERN}</Pattern>
+        </layout>
+    </appender>
+
+    <!--异步写入日志文件-->
+    <appender name="async_traceFile" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <maxFlushTime>500</maxFlushTime>
+        <neverBlock>false</neverBlock>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="trace_file"/>
+    </appender>
+
+    <appender name="async_infoFile" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <maxFlushTime>500</maxFlushTime>
+        <neverBlock>false</neverBlock>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="info_file"/>
+    </appender>
+
+    <appender name="async_debugFile" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <maxFlushTime>500</maxFlushTime>
+        <neverBlock>false</neverBlock>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="debug_file"/>
+    </appender>
+
+    <appender name="async_errorFile" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <maxFlushTime>500</maxFlushTime>
+        <neverBlock>false</neverBlock>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="error_file"/>
+    </appender>
+
+    <appender name="async_warnFile" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <maxFlushTime>500</maxFlushTime>
+        <neverBlock>false</neverBlock>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="warn_file"/>
+    </appender>
+
+
+
+
+    <appender name="async_druidFile" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+        <queueSize>512</queueSize>
+        <!--设为0表示队列达到80%，也不丢弃任务-->
+        <discardingThreshold>0</discardingThreshold>
+        <!--日志上下文关闭后，AsyncAppender继续执行写任务的时间，单位毫秒-->
+        <maxFlushTime>500</maxFlushTime>
+        <!--队列满了直接丢弃要写的消息，不阻塞写入队列-->
+        <neverBlock>false</neverBlock>
+        <!--是否包含调用方的信息，false则无法打印类名方法名行号等-->
+        <includeCallerData>true</includeCallerData>
+        <!--One and only one appender may be attached to AsyncAppender，添加多个的话后面的会被忽略-->
+        <appender-ref ref="druid_file"/>
+    </appender>
+
+
+    <include resource="logback-spring-json.xml" />
+    <include resource="logback-sql-json.xml" />
+    <!-- 配置druid的SQL日志输出 -->
+    <logger name="druid" level="DEBUG" additivity="false">
+        <appender-ref ref="async_druidFile" />
+        <appender-ref ref="async_debugSqlJson" />
+        <appender-ref ref="async_errorSqlJson" />
+    </logger>
+
+    <!--分别设置对应的日志输出节点 -->
+    <root level="info">
+        <appender-ref ref="console" />
+        <appender-ref ref="async_traceFile" />
+        <appender-ref ref="async_infoFile" />
+        <appender-ref ref="async_debugFile" />
+        <appender-ref ref="async_errorFile" />
+        <appender-ref ref="async_warnFile" />
+
+        <appender-ref ref="async_traceJson" />
+        <appender-ref ref="async_infoJson"/>
+        <appender-ref ref="async_debugJson" />
+        <appender-ref ref="async_errorJson" />
+        <appender-ref ref="async_warnJson" />
+    </root>
+
+
+</configuration>
