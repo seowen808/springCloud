@@ -22,7 +22,7 @@
         <mybatis-plus.version>3.3.1</mybatis-plus.version>
         <p6spy.version>3.8.7</p6spy.version>
         <druid.version>1.1.21</druid.version>
-        <fastjson.version>1.2.68</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <javax-servlet.version>4.0.1</javax-servlet.version>
         <mysql-connector.version>8.0.19</mysql-connector.version>
         <springboot-admin.version>2.1.6</springboot-admin.version>
